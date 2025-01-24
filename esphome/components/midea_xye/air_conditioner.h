@@ -204,6 +204,7 @@ public:
 private:
   uint8_t UpdateNextCycle;
   uint8_t ForceReadNextCycle;
+  uint8_t FollowMeTemp;
   uint32_t response_timeout;
 
 protected:
