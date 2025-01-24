@@ -36,13 +36,13 @@ void AirConditioner::control(const ClimateCall &call) {
     this->preset = call.get_preset().value();
   this->publish_state();
 
-  UpdateNextCycle = 1;
+  UpdateNextCycle = UPDATE_SET;
 }
 
 void AirConditioner::setup() {
   //this->uart_->check_uart_settings(4800, 1, UART_CONFIG_PARITY_NONE, 8);
   this->last_on_mode_ = *this->supported_modes_.begin();
-  UpdateNextCycle = 0;
+  UpdateNextCycle = UPDATE_QUERY;
   ForceReadNextCycle = 1;
 
   //Start up in Auto fan mode (since unit doesn't report it correctly)
@@ -66,7 +66,7 @@ void AirConditioner::setPowerState(bool state) {
   else 
     this->mode = ClimateMode::CLIMATE_MODE_OFF;
 
-  UpdateNextCycle = 1;
+  UpdateNextCycle = UPDATE_SET;
 }
 
 void AirConditioner::setClientCommand(uint8_t command) {
@@ -90,12 +90,12 @@ void AirConditioner::setClientCommand(uint8_t command) {
 
 void AirConditioner::update() {
 
-    if(0==UpdateNextCycle)
+    if(UPDATE_QUERY==UpdateNextCycle)
     {
       //construct query command
       setClientCommand(CLIENT_COMMAND_QUERY);
 
-    }else
+    }else if(UPDATE_SET==UpdateNextCycle) //SET command
     {
       //construct set command
       setClientCommand(CLIENT_COMMAND_SET);
@@ -139,8 +139,19 @@ void AirConditioner::update() {
       
       TXData[14] = CalculateCRC(TXData, TX_LEN);
       
-      UpdateNextCycle=0;
-    }  
+      UpdateNextCycle = UPDATE_QUERY;
+    }else if(UPDATE_FOLLOW_ME==UpdateNextCycle) //Follow me command
+    {
+      //construct set command
+      setClientCommand(CLIENT_COMMAND_FOLLOW_ME);
+
+      TXData[10] =  0x06; //0x06 or 0x04 ?
+      TXData[11] =  FollowMeTemp; //Temp
+      
+      TXData[14] = CalculateCRC(TXData, TX_LEN);
+      
+      UpdateNextCycle = UPDATE_QUERY;
+    }
 
 
     //TODO: Reimplement flow control for manual RS485 flow control chips 
@@ -398,7 +409,9 @@ void AirConditioner::do_follow_me(float temperature, bool beeper) {
   IrFollowMeData data(static_cast<uint8_t>(lroundf(temperature)), beeper);
   this->transmitter_.transmit(data);
 #else
-  ESP_LOGW(Constants::TAG, "Action needs remote_transmitter component");
+  FollowMeTemp = static_cast<uint8_t>(lroundf(temperature));
+  UpdateNextCycle = UPDATE_FOLLOW_ME;
+  //ESP_LOGW(Constants::TAG, "Action needs remote_transmitter component");
 #endif
 }
 
