@@ -13,6 +13,11 @@
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/climate/climate_traits.h"
 
+//UPDATE command structure
+#define UPDATE_QUERY        0
+#define UPDATE_SET          1
+#define UPDATE_FOLLOW_ME    2
+
 //CLIENT command structure
 #define PREAMBLE      0XAA
 #define PROLOGUE      0X55
