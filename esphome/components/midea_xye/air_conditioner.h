@@ -13,6 +13,10 @@
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/climate/climate_traits.h"
 
+//SERIAL COMMUNICATIONS
+#define RS485_TX_PIN_VALUE HIGH
+#define RS485_RX_PIN_VALUE LOW
+
 //UPDATE command structure
 #define UPDATE_QUERY        0
 #define UPDATE_SET          1
