@@ -54,7 +54,7 @@ void AirConditioner::setup() {
   digitalWrite(DEFAULT_SERIAL_COM_CONTROL_PIN, RS485_TX_PIN_VALUE);
   this->uart_->write_array(TXData, TX_LEN);
   this->uart_->flush();
-  delay(SERIAL_COM_MASTER_SEND_TIME);
+  delay(DEFAULT_SERIAL_COM_MASTER_SEND_TIME);
   digitalWrite(DEFAULT_SERIAL_COM_CONTROL_PIN, RS485_RX_PIN_VALUE);
   delay(this->response_timeout);
   uint8_t data;
@@ -161,7 +161,7 @@ void AirConditioner::update() {
     //TODO: Reimplement flow control for manual RS485 flow control chips 
     digitalWrite(DEFAULT_SERIAL_COM_CONTROL_PIN, RS485_TX_PIN_VALUE);
     this->uart_->write_array(TXData, TX_LEN);
-  delay(SERIAL_COM_MASTER_SEND_TIME);
+  delay(DEFAULT_SERIAL_COM_MASTER_SEND_TIME);
   digitalWrite(DEFAULT_SERIAL_COM_CONTROL_PIN, RS485_RX_PIN_VALUE);
   delay(this->response_timeout);
 
