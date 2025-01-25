@@ -40,11 +40,12 @@ void AirConditioner::control(const ClimateCall &call) {
 }
 
 void AirConditioner::setup() {
+  pinMode(DEFAULT_SERIAL_COM_CONTROL_PIN, OUTPUT);
   //this->uart_->check_uart_settings(4800, 1, UART_CONFIG_PARITY_NONE, 8);
   this->last_on_mode_ = *this->supported_modes_.begin();
   UpdateNextCycle = UPDATE_QUERY;
   ForceReadNextCycle = 1;
-
+  
   //Start up in Auto fan mode (since unit doesn't report it correctly)
   this->fan_mode = ClimateFanMode::CLIMATE_FAN_AUTO;
 
