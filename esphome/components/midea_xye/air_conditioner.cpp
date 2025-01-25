@@ -50,9 +50,11 @@ void AirConditioner::setup() {
 
   //Set interface to Celcius
   setClientCommand(CLIENT_COMMAND_CELCIUS);
+  digitalWrite(DEFAULT_SERIAL_COM_CONTROL_PIN, RS485_TX_PIN_VALUE);
   this->uart_->write_array(TXData, TX_LEN);
   this->uart_->flush();
   delay(this->response_timeout);
+  digitalWrite(DEFAULT_SERIAL_COM_CONTROL_PIN, RS485_RX_PIN_VALUE);
   uint8_t data;
   while (this->uart_->available())
     this->uart_->read_byte(&data);
@@ -155,11 +157,11 @@ void AirConditioner::update() {
 
 
     //TODO: Reimplement flow control for manual RS485 flow control chips 
-    //digitalWrite(ComControlPin, RS485_TX_PIN_VALUE);
+    digitalWrite(DEFAULT_SERIAL_COM_CONTROL_PIN, RS485_TX_PIN_VALUE);
     this->uart_->write_array(TXData, TX_LEN);
     this->uart_->flush();
     delay(this->response_timeout);
-    //digitalWrite(ComControlPin, RS485_RX_PIN_VALUE);
+    digitalWrite(DEFAULT_SERIAL_COM_CONTROL_PIN, RS485_RX_PIN_VALUE);
 
     uint8_t i = 0;
     while (this->uart_->available())
