@@ -2,6 +2,7 @@
 
 #ifdef USE_ARDUINO
 
+#include "Arduino.h"
 
 #include "esphome/core/defines.h"
 
